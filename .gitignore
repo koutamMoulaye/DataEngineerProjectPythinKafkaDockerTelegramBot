@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual env
+venv/
+
+# Secrets
+ApiKeyGCP.txt
+
+# IDE config
+.vscode/
+.idea/
+
+# HTML preview files
+Control Center.html
+Control Center_files/

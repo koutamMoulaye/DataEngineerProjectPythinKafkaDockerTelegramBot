@@ -1,0 +1,36 @@
+create STREAM youtube_videos (
+  video_id varchar Key,
+  title varchar,
+  likes integer,
+  comments INTEGER,
+  views INTEGER,
+  favorites INTEGER,
+  thumbnail varchar
+  ) with(
+    KAFKA_TOPIC = 'youtube_videos',
+    PARTITIONS = 1,
+    VALUE_FORMAT = 'json'
+    );
+
+    create table youtube_analytics_changes WITH(
+  KAFKA_TOPIC='youtube_analytics_changes'
+) as
+select  video_id,
+latest_by_offset(title)as title,
+latest_by_offset(comments, 2)[1] as comments_prev,
+latest_by_offset(comments, 2)[2] as comments_curr,
+latest_by_offset(likes, 2)[1] as likes_prev,
+latest_by_offset(likes, 2)[2] as likes_curr,
+latest_by_offset(views, 2)[1] as views_prev,
+latest_by_offset(views, 2)[2] as views_curr,
+latest_by_offset(favorites, 2)[1] as favorites_prev,
+latest_by_offset(favorites, 2)[2] as favorites_curr
+FROM youtube_videos
+GROUP BY video_id
+EMIT CHANGES;
+
+create stream telegram_output_stream (
+  `chat_id` varchar,
+  `text` varchar
+  ) WITH (KAFKA_TOPIC = 'telegram_output_stream', PARTITIONS = 1, value_format= 'avro');
+  
