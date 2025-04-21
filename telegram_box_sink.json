@@ -1,0 +1,31 @@
+{
+    "name": "telegram_box_sink",
+    "config": {
+      "connector.class": "io.confluent.connect.http.HttpSinkConnector",
+      "tasks.max": "1",
+      "topics": "telegram_output_stream",
+  
+      "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+      "value.converter.schemas.enable": "false",
+  
+      "transforms": "RenameFields",
+      "transforms.RenameFields.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
+      "transforms.RenameFields.renames": "CHAT_ID:chat_id,TEXT:text",
+  
+      "http.api.url": "https://api.telegram.org/bot8001716657:AAFRB8L8Y7kPB5JBvhodJFIIu2OyG1Buy3I/sendMessage",
+      "request.method": "post",
+      "headers": "Content-Type:application/json",
+      "request.body.format": "json",
+  
+      "batch.json.as.array": "false",
+      "batch.max.size": "1",
+  
+      "reporter.bootstrap.servers": "broker:29092",
+      
+      "errors.tolerance": "all",
+      "errors.log.enable": "true",
+      "errors.deadletterqueue.topic.name": "dlq-telegram",
+      "errors.deadletterqueue.topic.replication.factor": "1"
+    }
+  }
+  
